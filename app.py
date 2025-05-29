@@ -40,7 +40,19 @@ async def predict(file: UploadFile = File(...)):
     input_tensor = preprocess_image(img_bytes)
     prediction = model.predict(input_tensor)
     label = int(np.argmax(prediction))
-    return {"prediction": label, "confidence": float(np.max(prediction))}
+    
+    label_mapping = {
+        0: "cactus",
+        1: "chili",
+        2: "monstera",
+        3: "spinach",
+        4: "tomato"
+    }
+    
+    return {
+        "prediction": label_mapping.get(label, "unknown"),
+        "confidence": float(np.max(prediction))
+    }
 
 @app.post("/explain/lime")
 async def explain_lime(file: UploadFile = File(...)):

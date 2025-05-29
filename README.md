@@ -15,7 +15,6 @@ This project is a FastAPI-based server for AI model inference and explanation us
 
 - Python 3.9 or higher
 - [Virtualenv](https://virtualenv.pypa.io/en/latest/) for managing Python environments
-- Docker (optional, for containerized deployment)
 
 ---
 
@@ -59,6 +58,26 @@ uvicorn app:app --reload
 ```
 
 The server will start at `http://127.0.0.1:8000`.
+
+---
+## In Flutter
+
+```dart
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
+
+Future<void> sendImage(File file) async {
+  final url = Uri.parse('http://<your-ip>:8000/predict');
+  final request = http.MultipartRequest('POST', url);
+  request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  print(jsonDecode(responseBody));
+}
+
+```
 
 ---
 
@@ -109,34 +128,3 @@ The server will start at `http://127.0.0.1:8000`.
     "label": <label>
   }
   ```
-
----
-
-## Docker Deployment (Optional)
-
-### 1. Build the Docker Image
-
-```bash
-docker-compose build
-```
-
-### 2. Run the Docker Container
-
-```bash
-docker-compose up
-```
-
-The server will be available at `http://localhost:8000`.
-
----
-
-## Notes
-
-- **Model File**: Ensure the `mobilenetv2_model.h5` file is present in the root directory or update the `MODEL_FILE` environment variable to point to the correct path.
-- **Generated Files**: LIME and SHAP explanations are saved as `lime_result.png` and `shap_result.png` in the project directory.
-
----
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
